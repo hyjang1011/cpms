@@ -1,0 +1,30 @@
+devtools:
+  livereload:
+    enabled: true
+mybatis:
+  mapper-locations: mybatis/**/*.xml
+  type-aliases-package: com.coupon.cpms.api.entity
+spring:
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+  datasource:
+    driverClassName: 'org.mariadb.jdbc.Driver '
+    password: '080080'
+    url: 'jdbc:mariadb://localhost:3306/test?characterEncoding=UTF-8&serverTimezone=UTC '
+    username: 'root '
+  mvc:
+    view:
+      prefix: '/WEB-INF/jsp/ '
+      suffix: .jsp
+  social:
+    kakao:
+      client_id: WFhYWFhYWFhYWFhYWFhYWFhYWFhYWFhYWFggIyDDrMKVwrHDrMKDwp3DrMKEwrHDrMKLwpwgw6vCsMKbw6zCncKAIFJFU1QgQVBJIMOtwoLCpA==
+      redirect: /social/login/kakao
+  thymeleaf:
+    cache: 'false '
+    check-template-location: true
+    prefix: 'classpath:/templates/ '
+    suffix: '.html '
+    view-names: 'thymeleaf/* '
+  url:
+    base: ''

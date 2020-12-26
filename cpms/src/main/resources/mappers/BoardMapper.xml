@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coupon.cpms.mapper.BoardMapper">
+
+	<sql id="boardColumns">
+		  bbs_uno
+		, title
+		, content
+		, view_cnt
+		, notice_yn
+		, secret_yn
+		, delete_yn
+		, regist_uno
+		, regist_dt
+		, update_dt
+		, delete_dt
+	</sql>
+
+	<insert id="insertBoard" parameterType="BoardDTO" useGeneratedKeys="true" keyProperty="bbsUno">
+		INSERT INTO tb_board (
+			<include refid="boardColumns" />
+		) VALUES (
+			  #{bbsUno}
+			, #{title}
+			, #{content}
+			, 0
+			, IFNULL(#{noticeYn}, 'N')
+			, IFNULL(#{secretYn}, 'N')
+			, 'N'
+			, #{registUno}
+			, NOW()
+			, NULL
+			, NULL
+		)
+	</insert>
+
+	<select id="selectBoardDetail" parameterType="long" resultType="BoardDTO">
+		SELECT
+			<include refid="boardColumns" />
+		FROM
+			tb_board
+		WHERE
+			delete_yn = 'N'
+		AND
+			bbs_uno = #{bbsUno}
+	</select>
+
+	<update id="updateBoard" parameterType="BoardDTO">
+		UPDATE tb_board
+		SET
+			  update_dt = NOW()
+			, title = #{title}
+			, content = #{content}
+			, regist_uno = #{registUno}
+			, notice_yn = IFNULL(#{noticeYn}, 'N')
+			, secret_yn = IFNULL(#{secretYn}, 'N')
+		WHERE
+			bbs_uno = #{bbsUno}
+	</update>
+
+	<update id="deleteBoard" parameterType="long">
+		UPDATE tb_board
+		SET
+			  delete_yn = 'Y'
+			, delete_dt = NOW()
+		WHERE
+			bbs_uno = #{bbsUno}
+	</update>
+
+	<select id="selectBoardList" parameterType="BoardDTO" resultType="BoardDTO">
+		SELECT
+			<include refid="boardColumns" />
+		FROM
+			tb_board
+		WHERE
+			delete_yn = 'N'
+		<include refid="CommonMapper.search" />			
+		ORDER BY
+			notice_yn ASC,
+			bbs_uno DESC,
+			regist_dt DESC
+		<include refid="CommonMapper.paging" />	
+	</select>
+
+	<select id="selectBoardTotalCount" parameterType="BoardDTO" resultType="int">
+		SELECT
+			COUNT(*)
+		FROM
+			tb_board
+		WHERE
+			delete_yn = 'N'
+		<include refid="CommonMapper.search" />			
+	</select>
+	
+</mapper>	
