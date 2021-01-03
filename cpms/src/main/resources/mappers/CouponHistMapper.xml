@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coupon.cpms.mapper.CouponHistMapper">
+
+	<select id="selectCouponPurchaseList" parameterType="CouponHistDTO" resultType="CouponHistDTO">
+		SELECT 
+			TMCH.COUPON_SN
+			, TMCH.STORE_UNO
+			, TCP.DOWNLOAD_URL
+			, TC.COUPON_NM
+			, TC.PUBLISH_PRICE
+			, TC.DISCOUNT_RATE
+			, TC.EXPRTN_START_YM
+			, TC.EXPRTN_END_YM
+			, DATE_FORMAT(TMCH.PURCHASE_DT, '%Y.%m.%d %H:%i:%s') AS PURCHASE_DATE
+			, DATE_FORMAT(TMCH.USAGE_DT, '%Y.%m.%d %H:%i:%s') AS USAGE_DT_DATE
+		FROM TB_MEMBER_COUPON_HIST TMCH
+		INNER JOIN TB_COUPON_PUBLISH TCP 
+			ON TMCH.COUPON_UNO = TCP.COUPON_UNO AND TMCH.COUPON_SN = TCP.COUPON_SN
+		INNER JOIN TB_COUPON TC 
+			ON TMCH.COUPON_UNO = TC.COUPON_UNO
+		WHERE TC.USE_YN = 'Y'
+			AND TMCH.MEMBER_UNO = 1
+			<if test="exprtnStartYm != null and exprtnStartYm != ''">
+				AND TC.EXPRTN_START_YM >= #{exprtnStartYm}
+			</if>
+			<if test="exprtnEndYm != null and exprtnEndYm != ''">
+				AND TC.EXPRTN_END_YM <![CDATA[ <= ]]> #{exprtnEndYm}
+			</if>
+		ORDER BY
+			TMCH.PURCHASE_DT DESC
+			, TC.EXPRTN_END_YM ASC
+			, TC.COUPON_NM ASC
+			, TMCH.COUPON_SN ASC
+		<include refid="CommonMapper.paging" />	
+	</select>
+
+	<select id="selectCouponHistCount" parameterType="CouponHistDTO" resultType="int">
+		SELECT
+			COUNT(*)
+		FROM TB_MEMBER_COUPON_HIST TMCH
+		INNER JOIN TB_COUPON_PUBLISH TCP 
+			ON TMCH.COUPON_UNO = TCP.COUPON_UNO AND TMCH.COUPON_SN = TCP.COUPON_SN
+		INNER JOIN TB_COUPON TC 
+			ON TMCH.COUPON_UNO = TC.COUPON_UNO
+		WHERE TC.USE_YN = 'Y'
+			AND TMCH.MEMBER_UNO = 1
+			<if test="exprtnStartYm != null and exprtnStartYm != ''">
+				AND TC.EXPRTN_START_YM >= #{exprtnStartYm}
+			</if>
+			<if test="exprtnEndYm != null and exprtnEndYm != ''">
+				AND TC.EXPRTN_END_YM <![CDATA[ <= ]]> #{exprtnEndYm}
+			</if>		
+	</select>
+
+</mapper>
