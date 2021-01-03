@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coupon.cpms.mapper.MemberMapper">
+
+	<insert id="insertMember" parameterType="MemberDTO">
+		INSERT INTO tb_member (
+			member_uno
+			, email
+			, password
+			, access_token
+			, oauth_id
+			, provider_type
+			, nickname
+			, delete_yn
+			, regist_dt
+			, update_dt
+			, delete_dt
+		) VALUES (
+			  #{memberUno}
+			, #{email}
+			, #{password}
+			, #{accessToken}
+			, #{oauthId}
+			, #{providerType}
+			, #{nickname}
+			, 'N'
+			, NOW()
+			, NULL
+			, NULL
+		)
+	</insert>
+	
+	<select id="selectMemberByOAuthId" parameterType="String" resultType="MemberDTO">
+		SELECT
+			member_uno
+			, email
+			, password
+			, access_token
+			, oauth_id
+			, provider_type
+			, nickname
+		FROM
+			tb_member
+		WHERE 
+			delete_yn = 'N'
+		AND
+			oauth_id = #{oauthId}
+	</select>
+	
+	<update id="updateMemberByOAuthId" parameterType="MemberDTO">
+		UPDATE tb_member
+		SET
+			access_token = #{accessToken}
+			, nickname = #{nickname}
+			,  update_dt = NOW()
+		WHERE
+			oauth_id = #{oauthId}
+	</update>
+		
+
+</mapper>
