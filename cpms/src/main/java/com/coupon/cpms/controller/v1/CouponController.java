@@ -1,23 +1,19 @@
 /**
  * 
  */
-package com.coupon.cpms.controller;
+package com.coupon.cpms.controller.v1;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.coupon.cpms.domain.BoardDTO;
-import com.coupon.cpms.domain.CommentDTO;
 import com.coupon.cpms.domain.CouponHistDTO;
 import com.coupon.cpms.model.response.ListResult;
-import com.coupon.cpms.service.BoardService;
 import com.coupon.cpms.service.CouponHistService;
 
 import io.swagger.annotations.Api;
@@ -30,11 +26,11 @@ import lombok.RequiredArgsConstructor;
  *
  */
 
-@Api(tags = {"쿠론 관려 API"})
+@Api(tags = {"쿠론 관련 API"})
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(value = "/v1/my/coupon")
-public class CouponRController extends ParentRController {
+public class CouponController extends ParentController {
 
 	@Autowired
 	private CouponHistService couponService;
