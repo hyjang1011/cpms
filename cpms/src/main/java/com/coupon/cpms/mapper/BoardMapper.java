@@ -8,7 +8,6 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.coupon.cpms.domain.BoardDTO;
-import com.coupon.cpms.util.Criteria;
 
 /**
  * @author admin-PC

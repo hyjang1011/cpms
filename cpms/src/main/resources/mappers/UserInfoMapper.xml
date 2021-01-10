@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coupon.cpms.mapper.UserInfoMapper">
+
+	<insert id="insertUserInfoDTO" parameterType="UserInfoDTO">
+		INSERT INTO tb_user (
+			email
+			, passwrd
+			, auth
+			, access_token
+			, oauth_id
+			, provider_type
+			, nickname
+			, delete_yn
+			, regist_dt
+			, update_dt
+			, delete_dt
+		) VALUES (
+			#{email}
+			, #{passwrd}
+			, #{auth}
+			, #{accessToken}
+			, #{oauthId}
+			, #{providerType}
+			, #{nickname}
+			, 'N'
+			, NOW()
+			, NULL
+			, NULL
+		)
+	</insert>
+	
+	<insert id="insertUserInfo" parameterType="UserInfo">
+		INSERT INTO tb_user (
+			email
+			, passwrd
+			, auth
+			, access_token
+			, oauth_id
+			, provider_type
+			, nickname
+			, delete_yn
+			, regist_dt
+			, update_dt
+			, delete_dt
+		) VALUES (
+			#{email}
+			, #{passwrd}
+			, #{auth}
+			, #{accessToken}
+			, #{oauthId}
+			, #{providerType}
+			, #{nickname}
+			, 'N'
+			, NOW()
+			, NULL
+			, NULL
+		)
+	</insert>
+	
+	<select id="selectUserInfoByEmail" parameterType="String" resultType="UserInfo">
+		SELECT
+			user_uno
+			, email
+			, passwrd
+			, auth
+			, access_token
+			, oauth_id
+			, provider_type
+			, nickname
+		FROM
+			tb_user
+		WHERE 
+			delete_yn = 'N'
+		AND
+			email = #{email}
+	</select>
+	
+	<update id="updateUserInfoByEmail" parameterType="UserInfo">
+		UPDATE tb_user
+		SET
+			access_token = #{accessToken}
+			, nickname = #{nickname}
+			, update_dt = NOW()
+		WHERE
+			email = #{email}
+	</update>
+	
+	<select id="selectUserInfoByOAuthId" parameterType="String" resultType="UserInfo">
+		SELECT
+			user_uno
+			, email
+			, password
+			, access_token
+			, oauth_id
+			, provider_type
+			, nickname
+		FROM
+			tb_user
+		WHERE 
+			delete_yn = 'N'
+		AND
+			oauth_id = #{oauthId}
+	</select>
+	
+	<update id="updateMemberByOAuthId" parameterType="UserInfo">
+		UPDATE tb_user
+		SET
+			access_token = #{accessToken}
+			, nickname = #{nickname}
+			,  update_dt = NOW()
+		WHERE
+			oauth_id = #{oauthId}
+	</update>	
+	
+	<select id="selectUserInfoByOAuthIdAndProvider" parameterType="String" resultType="UserInfo">
+		SELECT
+			user_uno
+			, email
+			, password
+			, access_token
+			, oauth_id
+			, provider_type
+			, nickname
+		FROM
+			tb_user
+		WHERE 
+			delete_yn = 'N'
+		AND
+			oauth_id = #{oauthId}
+			and provider_type = #{provider}
+	</select>	
+
+</mapper>
