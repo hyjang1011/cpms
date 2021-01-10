@@ -3,20 +3,13 @@
  */
 package com.coupon.cpms.service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
-import com.coupon.cpms.adapter.GsonLocalDateTimeAdapter;
 import com.coupon.cpms.model.response.JsonCommonResult;
 import com.coupon.cpms.model.response.ListResult;
 import com.coupon.cpms.model.response.SingleResult;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 
 /**
  * @author admin-PC
@@ -55,6 +48,7 @@ public class ResponseService {
         setSuccessResult(result);
         return result;
     }
+    
     // 다중건 결과를 처리하는 메소드
     public <T> ListResult<T> getListResult(List<T> list) {
         ListResult<T> result = new ListResult<>();

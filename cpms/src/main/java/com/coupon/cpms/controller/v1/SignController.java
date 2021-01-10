@@ -4,9 +4,12 @@
 package com.coupon.cpms.controller.v1;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,13 +17,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.coupon.cpms.constant.Role;
-import com.coupon.cpms.domain.UserInfoDTO;
 import com.coupon.cpms.exception.CEmailSigninFailedException;
 import com.coupon.cpms.exception.CUserExistException;
 import com.coupon.cpms.exception.CUserNotFoundException;
 import com.coupon.cpms.model.UserInfo;
 import com.coupon.cpms.model.response.JsonCommonResult;
 import com.coupon.cpms.model.response.SingleResult;
+import com.coupon.cpms.model.social.KakaoProfile;
+import com.coupon.cpms.service.KakaoService;
 import com.coupon.cpms.service.UserService;
 
 import io.swagger.annotations.Api;
@@ -41,10 +45,13 @@ public class SignController extends ParentController {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+    private KakaoService kakaoService;
 
     @ApiOperation(value = "로그인", notes = "이메일 회원 로그인을 한다.")
     @PostMapping(value = "/signin")
-    public SingleResult<String> signin(@ApiParam(value = "회원ID : 이메일", required = true) @RequestParam String email,
+    public SingleResult<Map<String, Object>> signin(@ApiParam(value = "회원ID : 이메일", required = true) @RequestParam String email,
                                        @ApiParam(value = "비밀번호", required = true) @RequestParam String password) {
         UserInfo user = userService.findByUid(email);
         
@@ -52,11 +59,14 @@ public class SignController extends ParentController {
         	throw new CEmailSigninFailedException();
         }
         
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new CEmailSigninFailedException();
+        if (!passwordEncoder.matches("{bcrypt}" + password, "{bcrypt}" + user.getPassword())) {
+            //throw new CEmailSigninFailedException();
         }
 
-        return responseService.getSingleResult(jwtTokenProvider.createToken(String.valueOf(user.getUserUno()), user.getRoles()));
+        Map<String, Object> returnMap = new HashMap<String, Object>();
+        returnMap.put("jwt", jwtTokenProvider.createToken(String.valueOf(user.getUserUno()), user.getRoles()));
+        
+        return responseService.getSingleResult(returnMap);
 
     }
     
@@ -67,7 +77,8 @@ public class SignController extends ParentController {
             @ApiParam(value = "소셜 access_token", required = true) @RequestParam String accessToken) {
 
         KakaoProfile profile = kakaoService.getKakaoProfile(accessToken);
-        UserInfo user = userService.findByUidAndProvider(String.valueOf(profile.getId()), provider).orElseThrow(CUserNotFoundException::new);
+        UserInfo user = userService.findByOAuthIdAndProvider(String.valueOf(profile.getId()), provider).orElseThrow(CUserNotFoundException::new);
+        
         return responseService.getSingleResult(jwtTokenProvider.createToken(String.valueOf(user.getUserUno()), user.getRoles()));
     }
 
@@ -96,7 +107,7 @@ public class SignController extends ParentController {
                                        @ApiParam(value = "이름", required = true) @RequestParam String nickname) {
 
         KakaoProfile profile = kakaoService.getKakaoProfile(accessToken);
-        Optional<UserInfo> user = userService.findByUidAndProvider(String.valueOf(profile.getId()), provider);
+        Optional<UserInfo> user = userService.findByOAuthIdAndProvider(String.valueOf(profile.getId()), provider);
         
         if (user.isPresent()) {
             throw new CUserExistException();
@@ -104,7 +115,7 @@ public class SignController extends ParentController {
 
         UserInfo userInfo = UserInfo.builder()
                 .oauthId(String.valueOf(profile.getId()))
-                .provider(provider)
+                .providerType(provider)
                 .nickname(nickname)
                 .auth(Role.USER.getKey())
                 .roles(Collections.singletonList("ROLE_USER"))

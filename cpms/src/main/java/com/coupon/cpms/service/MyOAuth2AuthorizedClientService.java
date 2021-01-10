@@ -14,8 +14,9 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import com.coupon.cpms.domain.MemberDTO;
-import com.coupon.cpms.mapper.MemberMapper;
+import com.coupon.cpms.domain.UserInfoDTO;
+import com.coupon.cpms.mapper.UserInfoMapper;
+import com.coupon.cpms.model.UserInfo;
 
 /**
  * @author admin-PC
@@ -26,7 +27,7 @@ import com.coupon.cpms.mapper.MemberMapper;
 public class MyOAuth2AuthorizedClientService implements OAuth2AuthorizedClientService {
 
 	@Autowired
-	private MemberMapper memberMapper;
+	private UserInfoMapper userInfoMapper;
 	
 	@Override
 	public <T extends OAuth2AuthorizedClient> T loadAuthorizedClient(String clientRegistrationId, String principalName) {
@@ -46,19 +47,19 @@ public class MyOAuth2AuthorizedClientService implements OAuth2AuthorizedClientSe
         String oauthId = oauth2User.getName();
         String nickname = oauth2User.getAttribute("nickname");
 
-        MemberDTO memberDto = memberMapper.selectMemberByOAuthId(oauthId);
+        UserInfo userInfo = userInfoMapper.selectUserInfoByOAuthId(oauthId);
         
-        if(memberDto != null) {
-        	memberMapper.updateMemberByOAuthId(memberDto);
+        if(userInfo != null) {
+        	userInfoMapper.updateUserInfoByOAuthId(userInfo);
         }else {        	
-        	memberDto = new MemberDTO();
+        	userInfo = new UserInfo();
         	
-        	memberDto.setOauthId(oauthId);
-        	memberDto.setNickname(nickname);
-        	memberDto.setProviderType(providerType);
-        	memberDto.setAccessToken(accessToken.getTokenValue());
+        	userInfo.setOauthId(oauthId);
+        	userInfo.setNickname(nickname);
+        	userInfo.setProviderType(providerType);
+        	userInfo.setAccessToken(accessToken.getTokenValue());
 
-        	memberMapper.insertMember(memberDto);
+        	userInfoMapper.insertUserInfo(userInfo);
         }
         
 	}

@@ -9,7 +9,6 @@ import org.springframework.util.CollectionUtils;
 
 import com.coupon.cpms.domain.BoardDTO;
 import com.coupon.cpms.mapper.BoardMapper;
-import com.coupon.cpms.util.Criteria;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
